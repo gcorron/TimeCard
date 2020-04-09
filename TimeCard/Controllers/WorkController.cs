@@ -26,17 +26,35 @@ namespace TimeCard.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(ViewModels.WorkViewModel vm)
+        public ActionResult Index(ViewModels.WorkViewModel vm, string buttonValue)
         {
+            if (buttonValue == "Save")
+            {
+                if (ModelState.IsValid)
+                {
+                    var work = vm.EditWork;
+                    _WorkRepo.SaveWork(work);
+                }
+            }
+            else
+            {
+                if (buttonValue == "Delete")
+                {
+                    _WorkRepo.DeleteWork(vm.EditWork.WorkId);
+                    vm.EditWork = null;
+                }
+                ModelState.Clear();
+            }
             prepWork(vm);
             return View(vm);
         }
 
         private void prepWork(ViewModels.WorkViewModel vm)
         {
-            if (Session["Contractor"] == null)
+            Domain.Lookup contractor = Session["Contractor"] as Domain.Lookup;
+            if (contractor == null)
             {
-                var contractor = LookupRepo.GetLookupByVal("Contractor", CurrentUsername);
+                contractor = LookupRepo.GetLookupByVal("Contractor", CurrentUsername);
                 Session["Contractor"] = contractor;
             }
 
@@ -51,13 +69,13 @@ namespace TimeCard.Controllers
             vm.WorkEntries = _WorkRepo.GetWork((Session["Contractor"] as Domain.Lookup).Id, vm.SelectedCycle, true);
             if (vm.EditWork == null)
             {
-                vm.EditWork = new Domain.Work();
+                vm.EditWork = new Domain.Work { ContractorId=contractor.Id, WorkDay=DateRef.GetWorkDay(DateTime.Today) };
             }
             vm.EditDays = GetEditDays(vm.SelectedCycle);
         }
         private IEnumerable<SelectListItem> GetEditDays(int thisCycle)
         {
-            return Enumerable.Range(0, 13).Select(x => new SelectListItem { Text = DateRef.GetWorkDate(thisCycle + (decimal)x / 100, false), Value = (thisCycle + (decimal)x / 100).ToString() });
+            return Enumerable.Range(0, 14).Select(x => new SelectListItem { Text = DateRef.GetWorkDate(thisCycle + (decimal)x / 100, false), Value = (thisCycle + (decimal)x / 100).ToString() });
         }
 
         private IEnumerable<SelectListItem> GetPayCycles()

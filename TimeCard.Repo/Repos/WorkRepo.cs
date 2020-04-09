@@ -23,6 +23,22 @@ namespace TimeCard.Repo
             }
         }
 
+        public void SaveWork(Work work)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                conn.Execute("uWork", new { work.WorkId, work.ContractorId, work.JobId, work.WorkDay, work.Descr, work.Hours }, null, null, System.Data.CommandType.StoredProcedure);
+            }
+        }
+
+        public void DeleteWork(int workId)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                conn.Execute("dWork", new { workId }, null, null, System.Data.CommandType.StoredProcedure);
+            }
+        }
+
         public IEnumerable<Lookup> GetJobs()
         {
             using (var conn = GetOpenConnection())

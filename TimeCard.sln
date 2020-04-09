@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeCard.Repo", "TimeCard.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{791810BF-24C4-427F-80A2-8411233CE758}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{4E9C041A-0CB9-42FE-A62C-1BE71B35CC2F}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TimeCard.Database", "TimeCard.Database\TimeCard.Database.sqlproj", "{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +41,12 @@ Global
 		{791810BF-24C4-427F-80A2-8411233CE758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{791810BF-24C4-427F-80A2-8411233CE758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{791810BF-24C4-427F-80A2-8411233CE758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +55,7 @@ Global
 		{598F3908-4BE4-4F25-A8D1-BAAEF7D3747B} = {6A740E22-3458-4DCB-ADDB-9BD24B406BB4}
 		{F3D128E8-D63F-4AE9-8F2B-B20EB127E425} = {C7E8EE5D-9DC0-49B2-8B2D-5D72DD5934B0}
 		{791810BF-24C4-427F-80A2-8411233CE758} = {C7E8EE5D-9DC0-49B2-8B2D-5D72DD5934B0}
+		{705C9799-F3F9-425E-99CE-A1CC0D1D3B10} = {4E9C041A-0CB9-42FE-A62C-1BE71B35CC2F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EFC5726-CCCC-4BC0-AE56-05E1CE0B510C}
