@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeCard.Domain", "TimeCard
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeCard.Repo", "TimeCard.Repo\TimeCard.Repo.csproj", "{F3D128E8-D63F-4AE9-8F2B-B20EB127E425}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{791810BF-24C4-427F-80A2-8411233CE758}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{F3D128E8-D63F-4AE9-8F2B-B20EB127E425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D128E8-D63F-4AE9-8F2B-B20EB127E425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D128E8-D63F-4AE9-8F2B-B20EB127E425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{791810BF-24C4-427F-80A2-8411233CE758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791810BF-24C4-427F-80A2-8411233CE758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791810BF-24C4-427F-80A2-8411233CE758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791810BF-24C4-427F-80A2-8411233CE758}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{598F3908-4BE4-4F25-A8D1-BAAEF7D3747B} = {6A740E22-3458-4DCB-ADDB-9BD24B406BB4}
 		{F3D128E8-D63F-4AE9-8F2B-B20EB127E425} = {C7E8EE5D-9DC0-49B2-8B2D-5D72DD5934B0}
+		{791810BF-24C4-427F-80A2-8411233CE758} = {C7E8EE5D-9DC0-49B2-8B2D-5D72DD5934B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EFC5726-CCCC-4BC0-AE56-05E1CE0B510C}

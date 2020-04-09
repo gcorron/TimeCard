@@ -15,8 +15,8 @@ namespace TimeCard.Domain
         {
             get
             {
-                int cycle = (int)Decimal.Floor(workDay);
-                return $"{BaselineDate.AddDays((double)(cycle * 14 + (workDay - cycle) * 100)) : d}";
+                int cycle = (int)Decimal.Floor(WorkDay);
+                return $"{BaselineDate.AddDays((double)(cycle * 14 + (WorkDay - cycle) * 100)) : MM/dd}";
             }
         }
     }

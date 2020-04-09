@@ -22,3 +22,12 @@ select,
 textarea {
     max-width: 280px;
 }
+
+thead.sticky th {
+    position: sticky !important;
+    top: -1px;
+    background-color: silver;
+}
+label.col-form-label {
+    text-align:right;
+}

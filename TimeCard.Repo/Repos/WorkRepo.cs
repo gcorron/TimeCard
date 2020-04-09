@@ -17,19 +17,17 @@ namespace TimeCard.Repo
 
         public IEnumerable<Work>GetWork(int contractorId, decimal workDay, bool payCycle)
         {
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = GetOpenConnection())
             {
-                OpenConnection(conn);
                 return conn.Query<Work>("sWork", new { contractorId, workDay, payCycle }, null, true, null, System.Data.CommandType.StoredProcedure);
             }
         }
 
-        public IEnumerable<LookupShort> GetJobs()
+        public IEnumerable<Lookup> GetJobs()
         {
-            using (var conn = new SqlConnection(ConnectionString))
+            using (var conn = GetOpenConnection())
             {
-                OpenConnection(conn);
-                return conn.Query<LookupShort>("sJobs", null, null, true, null, System.Data.CommandType.StoredProcedure);
+                return conn.Query<Lookup>("sJob", null, null, true, null, System.Data.CommandType.StoredProcedure);
             }
         }
     }

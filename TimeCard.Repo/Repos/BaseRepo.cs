@@ -15,12 +15,14 @@ namespace TimeCard.Repo
             ConnectionString = connectionString;
         }
 
-        protected void OpenConnection(SqlConnection conn)
+        protected SqlConnection GetOpenConnection()
         {
+            var conn = new SqlConnection(ConnectionString);
             if (conn.State != System.Data.ConnectionState.Open)
             {
                 conn.Open();
             }
+            return conn;
         }
     }
 }
