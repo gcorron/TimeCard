@@ -39,6 +39,14 @@ namespace TimeCard.Repo
             }
         }
 
+        public IEnumerable<WorkExtended> GetWorkExtended(int contractorId, decimal workDay, bool payCycle, int payCycles)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                return conn.Query<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle, payCycles }, null, true, null, System.Data.CommandType.StoredProcedure);
+            }
+        }
+
         public IEnumerable<Lookup> GetJobs()
         {
             using (var conn = GetOpenConnection())
