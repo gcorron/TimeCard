@@ -33,11 +33,19 @@ namespace TimeCard.Repo.Repos
             }
         }
 
-        public IEnumerable<Lookup> GetLookups(string group)
+        public IEnumerable<Lookup> GetLookups(string group, string addFirstRow = null)
         {
             using (var conn = GetOpenConnection())
             {
-                return conn.Query<Lookup>("sLookup", new { group }, null, true, null, CommandType.StoredProcedure);
+                var data = conn.Query<Lookup>("sLookup", new { group }, null, true, null, CommandType.StoredProcedure);
+                if (addFirstRow != null)
+                {
+                    return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
+                }
+                else
+                {
+                    return data;
+                }
             }
         }
 

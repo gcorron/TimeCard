@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Job.cs" />
     <Compile Include="Lookup.cs" />
+    <Compile Include="PaymentSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Work.cs" />
     <Compile Include="WorkExtended.cs" />

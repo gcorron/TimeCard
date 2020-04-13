@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Repos\BaseRepo.cs" />
     <Compile Include="Repos\LookupRepo.cs" />
+    <Compile Include="Repos\PaymentRepo.cs" />
     <Compile Include="Repos\WorkRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

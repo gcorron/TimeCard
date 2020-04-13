@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using TimeCard.Domain;
 
-namespace TimeCard.Repo
+namespace TimeCard.Repo.Repos
 {
     public class WorkRepo : BaseRepo   
     {
@@ -27,7 +27,7 @@ namespace TimeCard.Repo
         {
             using (var conn = GetOpenConnection())
             {
-                conn.Execute("uWork", new { work.WorkId, work.ContractorId, work.JobId, work.WorkDay, work.Descr, work.Hours }, null, null, System.Data.CommandType.StoredProcedure);
+                conn.Execute("uWork", new { work.WorkId, work.ContractorId, work.JobId, work.WorkDay, work.Descr, work.Hours, work.WorkType }, null, null, System.Data.CommandType.StoredProcedure);
             }
         }
 
@@ -47,11 +47,19 @@ namespace TimeCard.Repo
             }
         }
 
-        public IEnumerable<Lookup> GetJobs()
+        public IEnumerable<Lookup> GetJobs(string addFirstRow = null)
         {
             using (var conn = GetOpenConnection())
             {
-                return conn.Query<Lookup>("sJob", null, null, true, null, System.Data.CommandType.StoredProcedure);
+                var data = conn.Query<Lookup>("sJob", null, null, true, null, System.Data.CommandType.StoredProcedure);
+                if (addFirstRow != null)
+                {
+                    return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
+                }
+                else
+                {
+                    return data;
+                }
             }
         }
     }

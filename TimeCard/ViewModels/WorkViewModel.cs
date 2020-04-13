@@ -11,6 +11,7 @@ namespace TimeCard.ViewModels
     {
         public IEnumerable<SelectListItem> PayCycles { get; set; }
         public IEnumerable<SelectListItem> Jobs { get; set; }
+        public IEnumerable<SelectListItem> WorkTypes { get; set; }
         public IEnumerable<SelectListItem> EditDays { get; set; }
         public decimal TestWorkDay { get; set; }
         public string TestToday { get; set; }

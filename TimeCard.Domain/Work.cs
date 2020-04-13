@@ -12,6 +12,9 @@ namespace TimeCard.Domain
         [Range(1, int.MaxValue, ErrorMessage = "Please select a Job")]
         public int JobId { get; set; }
         public string Job { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a Work Type")]
+        public int WorkType { get; set; }
+        public string WorkTypeDescr { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Please select a Date")]
         public decimal WorkDay { get; set; }
         [Required]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using TimeCard.Repo;
+using TimeCard.Repo.Repos;
 using TimeCard.Helpers;
 using OfficeOpenXml;
 using System.IO;
@@ -14,10 +14,12 @@ namespace TimeCard.Controllers
     public class WorkController : BaseController
     {
         private readonly WorkRepo _WorkRepo;
+        private readonly LookupRepo _LookupRepo;
 
         public WorkController()
         {
             _WorkRepo = new WorkRepo(ConnString);
+            _LookupRepo = new LookupRepo(ConnString);
         }
 
         public ActionResult Index()
@@ -31,22 +33,24 @@ namespace TimeCard.Controllers
         [HttpPost]
         public ActionResult Index(ViewModels.WorkViewModel vm, string buttonValue)
         {
-            if (buttonValue == "Save")
+            switch(buttonValue)
             {
-                if (ModelState.IsValid)
-                {
-                    var work = vm.EditWork;
-                    _WorkRepo.SaveWork(work);
-                }
-            }
-            else
-            {
-                if (buttonValue == "Delete")
-                {
+                case "Save":
+                    if (ModelState.IsValid)
+                    {
+                        var work = vm.EditWork;
+                        _WorkRepo.SaveWork(work);
+                    }
+                    break;
+                case "Delete":
                     _WorkRepo.DeleteWork(vm.EditWork.WorkId);
                     vm.EditWork = null;
-                }
-                ModelState.Clear();
+                    ModelState.Clear();
+                    break;
+                default:
+                    vm.EditWork = null;
+                    ModelState.Clear();
+                    break;
             }
             prepWork(vm);
             return View(vm);
@@ -63,7 +67,8 @@ namespace TimeCard.Controllers
 
             var cycles = GetPayCycles();
             int cycle = int.Parse(cycles.First().Value);
-            vm.Jobs = _WorkRepo.GetJobs().Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
+            vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
+            vm.WorkTypes = _LookupRepo.GetLookups("WorkType","- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
             vm.PayCycles = cycles;
             if (vm.SelectedCycle == 0)
             {
@@ -90,15 +95,15 @@ namespace TimeCard.Controllers
         [HttpPost]
         public ActionResult GenerateDocs(int contractorId, int cycle)
         {
-            var templateFile = new FileInfo(@"c:\TEMP\TimecardTemplates.xlsx");
+            var templateFile = new FileInfo(Server.MapPath("~/Content/TimeCardTemplates.xlsx"));
 
             try
             {
                 string name = LookupRepo.GetLookups("Contractor").Where(x => x.Id == contractorId).FirstOrDefault()?.Descr;
 
                 var fileList = new List<string>();
-                //GenerateTimeCards(contractorId, name, templateFile, cycle, fileList);
-                //GenerateTimeBooks(contractorId, name, templateFile, cycle, fileList);
+                GenerateTimeCards(contractorId, name, templateFile, cycle, fileList);
+                GenerateTimeBooks(contractorId, name, templateFile, cycle, fileList);
                 GenerateInvoices(contractorId, name, templateFile, cycle, fileList);
                 if (!fileList.Any())
                 {
@@ -207,8 +212,9 @@ namespace TimeCard.Controllers
                         foreach (var entry in tb)
                         {
                             sheet.Cells[currentRow, 1].Value = $"{entry.WorkDate:MM/dd/yyyy}";
-                            sheet.Cells[currentRow, 3].Value = entry.Hours;
-                            sheet.Cells[currentRow, 3].Value = entry.Descr;
+                            sheet.Cells[currentRow, 2].Value = entry.Hours;
+                            sheet.Cells[currentRow, 3].Value = entry.WorkType;
+                            sheet.Cells[currentRow, 4].Value = entry.Descr;
                             currentRow++;
                         }
                     }
