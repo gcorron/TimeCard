@@ -21,5 +21,13 @@ namespace TimeCard.Repo.Repos
             }
         }
 
+        public void SavePayment(Payment payment)
+        {
+            using (var conn = GetOpenConnection())
+            {
+                conn.Execute("uPayment", new { payment.PayId, payment.ContractorId, payment.JobId, payment.Amount, payment.CheckNo });
+            }
+        }
+
     }
 }

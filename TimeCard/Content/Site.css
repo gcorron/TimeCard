@@ -31,3 +31,7 @@ thead.sticky th {
 label.col-form-label {
     text-align:right;
 }
+
+.input-validation-error {
+    background-color: #ffcaca;
+}

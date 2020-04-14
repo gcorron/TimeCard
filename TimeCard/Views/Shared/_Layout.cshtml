@@ -8,6 +8,8 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryunobtrusive")
+    @Scripts.Render("~/bundles/inputmask")
     @Styles.Render("~/Content/fontawesome")
 </head>
 <body>
@@ -18,13 +20,20 @@
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
                     @Html.ActionLink("Work", "Index", "Work")
+                    @Html.ActionLink("Payment", "Index", "Payment")
                 </li>
             </ul>
         </div>
     </nav>
     <div class="container-fluid body-content">
         <div class="row">
-            <div class="col-md-6 ml-auto text-right">You are logged in as @((Session["Contractor"] as TimeCard.Domain.Lookup).Descr)</div>
+            @{ var contractor = Session["Contractor"] as TimeCard.Domain.Lookup;
+                if (contractor != null)
+                {
+                    <div class="col-md-6 ml-auto text-right">You are logged in as @contractor.Descr</div>
+                }
+
+            }
         </div>
 
         @RenderBody()

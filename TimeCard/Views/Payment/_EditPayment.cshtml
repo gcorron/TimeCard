@@ -1,0 +1,51 @@
+﻿@model TimeCard.ViewModels.PaymentViewModel
+
+@using (Ajax.BeginForm("Index", null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "edit", OnFailure = "console.log('Server ajax error');" }, new { id = "formPayment" }))
+{
+    <div class="card mt-3">
+        <div class="card-header">
+            <div class="form-group row align-self-center">
+                @{ if (Model.IsAdmin)
+                    {
+                        <div class="col-md-2 col-form-label text-right">Contractor</div>
+                        <div class="col-md-3">@Html.DropDownListFor(m => m.EditPayment.ContractorId, Model.Contractors, new { @class = "form-control" })</div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.SelectedContractor)
+                    }
+                }
+                <div class="col-md-1 col-form-label text-right">Job</div>
+                <div class="col-md-3">@Html.DropDownListFor(m => m.SelectedJob, Model.Jobs, new { @class = "form-control" })</div>
+            </div>
+        </div>
+        <div class="card-body @(Model.EditPayment.PayId == 0 ? "bg-success" : "bg-info" )" style=@(Model.CanEdit ? "" : "display:none;")>
+            <div class="form-group form-row">
+                <div class="col-md-1 col-form-label text-right">Date</div>
+                <div class="col-md-2">@Html.TextBoxFor(m => m.EditPayment.PayDate, new { @class = "form-control", type = "date" })</div>
+                <div class="col-md-1 col-form-label text-right">Amount</div>
+                <div class="col-md-2">@Html.TextBoxFor(m => m.EditPayment.Amount, new { @class = "form-control" })</div>
+                <div class="col-md-1 col-form-label text-right">Check #</div>
+                <div class="col-md-2">@Html.TextBoxFor(m => m.EditPayment.CheckNo, new { @class = "form-control", type = "number", maxlength = "5" })</div>
+                <div class="col-md-3 text-right">
+                    <button class="btn btn-default fa fa-2x fa-plus edit-button" type="button" id="btnAdd" title="Add" style="display:none;"></button>
+                    <button class="btn btn-default fa fa-2x fa-times edit-button" name="buttonValue" style="display:none;" value="Delete" title="Delete" type="submit" onclick="return confirm('Delete are you sure?');"></button>
+                    <button class="btn btn-default fa fa-2x fa-check" name="buttonValue" value="Save" title="Save" type="submit"></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(function () {
+        $("#@Html.IdFor(m => m.EditPayment.Amount)").inputmask({
+            alias: 'currency',
+            greedy: false,
+            autoUnmask: true,
+            clearMaskOnLostFocus: true,
+        });
+    });
+
+</script>
