@@ -12,10 +12,13 @@ namespace TimeCard.ViewModels
         public IEnumerable<PaymentSummary> PaymentSummary { get; set; }
         public IEnumerable<SelectListItem> Jobs { get; set; }
         public IEnumerable<SelectListItem> Contractors { get; set; }
-        public int SelectedJob { get; set; }
-        public int SelectedContractor { get; set; }
-        public bool CanEdit { get => !(SelectedJob == 0 || SelectedContractor == 0); }
+        public int SelectedJobId { get; set; }
+        public bool JobIsTimeCard { get; set; }
+        public int SelectedContractorId { get; set; }
+        public bool CanEdit { get => !(SelectedJobId == 0 || SelectedContractorId == 0); }
         public bool IsAdmin { get; set; }
         public Payment EditPayment { get; set; }
+        public IEnumerable<Payment>Payments { get; set; }
+        public IEnumerable<TimeCardUnpaid> TimeCardsUnpaid { get; set; }
     }
 }

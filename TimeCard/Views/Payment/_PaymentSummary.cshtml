@@ -1,0 +1,45 @@
+﻿@model TimeCard.ViewModels.PaymentViewModel
+<div class="row mt-3" style="max-height:450px; overflow-y:auto; position:relative;">
+    <div class="col-md-12">
+        <table class="table table-sm table-striped table-hover">
+            <thead class="sticky">
+                <tr>
+                    <th>Client</th>
+                    <th>Project</th>
+                    <th>Bill Type</th>
+                    <th>Billed</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ foreach (var summary in Model.PaymentSummary)
+                    {
+                        <tr class="summary-row" data-edit="@(Json.Encode(new  { summary.JobId }))">
+                            <td style="width:15%;">@summary.Client</td>
+                            <td style="width:15%;">@summary.Project</td>
+                            <td style="width:7%;">@summary.BillType</td>
+                            <td style="width:7%;">@summary.Billed</td>
+                            <td style="width:7%;">@summary.Paid</td>
+                            <td style="width:7%;">@summary.Balance</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".summary-row").css("cursor", "pointer");
+        $(".summary-row").click(function () {
+            id = $(this).data("edit").JobId;
+            console.log(id);
+            $("#@Html.IdFor(m => m.SelectedJobId)").val(id);
+            $("#formPayment").submit();
+            $('a[href="#edit"]').tab("show");
+        });
+
+    });
+
+</script>

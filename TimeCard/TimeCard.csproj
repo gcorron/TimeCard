@@ -320,6 +320,7 @@
     <Content Include="Views\Work\Index.cshtml" />
     <Content Include="Views\Payment\Index.cshtml" />
     <Content Include="Views\Payment\_EditPayment.cshtml" />
+    <Content Include="Views\Payment\_PaymentSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -9,57 +9,42 @@ using TimeCard.Domain;
 
 namespace TimeCard.Repo.Repos
 {
-    public class WorkRepo : BaseRepo   
+    public class WorkRepo : BaseRepo
     {
         public WorkRepo(string connectionString) : base(connectionString)
         {
         }
 
-        public IEnumerable<Work>GetWork(int contractorId, decimal workDay, bool payCycle)
+        public IEnumerable<Work> GetWork(int contractorId, decimal workDay, bool payCycle)
         {
-            using (var conn = GetOpenConnection())
-            {
-                return conn.Query<Work>("sWork", new { contractorId, workDay, payCycle }, null, true, null, System.Data.CommandType.StoredProcedure);
-            }
+            return QuerySp<Work>("sWork", new { contractorId, workDay, payCycle });
         }
 
         public void SaveWork(Work work)
         {
-            using (var conn = GetOpenConnection())
-            {
-                conn.Execute("uWork", new { work.WorkId, work.ContractorId, work.JobId, work.WorkDay, work.Descr, work.Hours, work.WorkType }, null, null, System.Data.CommandType.StoredProcedure);
-            }
+            ExecuteSp("uWork", new { work.WorkId, work.ContractorId, work.JobId, work.WorkDay, work.Descr, work.Hours, work.WorkType });
         }
 
         public void DeleteWork(int workId)
         {
-            using (var conn = GetOpenConnection())
-            {
-                conn.Execute("dWork", new { workId }, null, null, System.Data.CommandType.StoredProcedure);
-            }
+            ExecuteSp("dWork", new { workId });
         }
 
         public IEnumerable<WorkExtended> GetWorkExtended(int contractorId, decimal workDay, bool payCycle, int payCycles)
         {
-            using (var conn = GetOpenConnection())
-            {
-                return conn.Query<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle, payCycles }, null, true, null, System.Data.CommandType.StoredProcedure);
-            }
+            return QuerySp<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle, payCycles });
         }
 
         public IEnumerable<Lookup> GetJobs(string addFirstRow = null)
         {
-            using (var conn = GetOpenConnection())
+            var data = QuerySp<Lookup>("sJob", null);
+            if (addFirstRow != null)
             {
-                var data = conn.Query<Lookup>("sJob", null, null, true, null, System.Data.CommandType.StoredProcedure);
-                if (addFirstRow != null)
-                {
-                    return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
-                }
-                else
-                {
-                    return data;
-                }
+                return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
+            }
+            else
+            {
+                return data;
             }
         }
     }

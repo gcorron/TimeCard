@@ -27,7 +27,7 @@ namespace TimeCard.Controllers
 
             var vm = new PaymentViewModel
             {
-                SelectedContractor = CurrentUserId,
+                SelectedContractorId = CurrentUserId,
                 IsAdmin=false,
                 EditPayment = new Domain.Payment { ContractorId=CurrentUserId }
             };
@@ -43,10 +43,23 @@ namespace TimeCard.Controllers
                 case "Save":
                     if (ModelState.IsValid)
                     {
+                        vm.EditPayment.ContractorId = vm.SelectedContractorId;
+                        vm.EditPayment.JobId = vm.SelectedJobId;
                         _PaymentRepo.SavePayment(vm.EditPayment);
+                        vm.EditPayment = new Domain.Payment { PayDate = vm.EditPayment.PayDate };
+                        ModelState.Clear();
                     }
                     break;
+                case "Delete":
+                    _PaymentRepo.DeletePayment(vm.EditPayment.PayId);
+                    vm.EditPayment = new Domain.Payment { PayDate = vm.EditPayment.PayDate };
+                    ModelState.Clear();
+                    break;
+                case "Summary":
+                    prepPayment(vm);
+                    return PartialView("_PaymentSummary", vm);
                 default:
+                    vm.EditPayment = new Domain.Payment { PayDate = vm.EditPayment.PayDate };
                     ModelState.Clear();
                     break;
             }
@@ -56,9 +69,23 @@ namespace TimeCard.Controllers
 
         private void prepPayment(PaymentViewModel vm)
         {
-            vm.PaymentSummary = _PaymentRepo.GetSummary(CurrentUserId);
+            vm.PaymentSummary = _PaymentRepo.GetSummary(vm.SelectedContractorId);
+
+            vm.JobIsTimeCard= vm.SelectedJobId == 0 ? false : _PaymentRepo.JobIsTimeCard(vm.SelectedJobId);
+            if (vm.JobIsTimeCard)
+            {
+                vm.TimeCardsUnpaid = _PaymentRepo.GetJobTimeCardUnpaidCycles(vm.SelectedContractorId, vm.SelectedJobId);
+            }
             vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
             vm.Contractors = _LookupRepo.GetLookups("Contractor", "- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
+            if (vm.SelectedJobId == 0 || vm.SelectedContractorId == 0)
+            {
+                vm.Payments = Enumerable.Empty<Domain.Payment>();
+            }
+            else
+            {
+                vm.Payments = _PaymentRepo.GetPayments(vm.SelectedContractorId, vm.SelectedJobId);
+            }
         }
     }
 }

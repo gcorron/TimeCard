@@ -8,6 +8,7 @@ namespace TimeCard.Domain
 {
     public class PaymentSummary
     {
+        public int JobId { get; set; }
         public string Client { get; set; }
         public string Project { get; set; }
         public string BillType { get; set; }

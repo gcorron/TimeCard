@@ -13,21 +13,35 @@ namespace TimeCard.Repo.Repos
         public PaymentRepo(string connectionString) : base(connectionString)
         {
         }
+
         public IEnumerable<PaymentSummary> GetSummary(int contractorId)
         {
-            using (var conn = GetOpenConnection())
-            {
-                return conn.Query<PaymentSummary>("sPaymentSummary", new { contractorId }, null, true, null, System.Data.CommandType.StoredProcedure);
-            }
+                return QuerySp<PaymentSummary>("sPaymentSummary", new { contractorId });
+        }
+
+        public IEnumerable<Payment> GetPayments(int contractorId, int jobId)
+        {
+            return QuerySp<Payment>("sPayment", new { contractorId, jobId });
         }
 
         public void SavePayment(Payment payment)
         {
-            using (var conn = GetOpenConnection())
-            {
-                conn.Execute("uPayment", new { payment.PayId, payment.ContractorId, payment.JobId, payment.Amount, payment.CheckNo });
-            }
+            ExecuteSp("uPayment", new { payment.PayId, payment.ContractorId, payment.JobId, payment.Hours, payment.PayDate, payment.CheckNo, payment.WorkDay }) ;
         }
 
+        public void DeletePayment(int payId)
+        {
+            ExecuteSp("dPayment", new { payId });
+        }
+
+        public bool JobIsTimeCard(int jobId)
+        {
+            return QuerySingleSp<bool>("sJobIsTimeCard", new { jobId });
+        }
+
+        public IEnumerable<TimeCardUnpaid> GetJobTimeCardUnpaidCycles(int contractorId, int jobId)
+        {
+            return QuerySp<TimeCardUnpaid>("sJobTimeCardUnpaidCycles",new { contractorId, jobId });
+        }
     }
 }

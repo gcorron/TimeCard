@@ -12,10 +12,12 @@ namespace TimeCard.Domain
         public int PayId { get; set; }
         public int ContractorId { get; set; }
         public int JobId { get; set; }
-        public int Amount { get; set; }
+        [Range(0.25, int.MaxValue, ErrorMessage = "Please enter Hours")]
+        public decimal Hours { get; set; }
         [Required]
         public DateTime? PayDate { get; set; }
         [Required]
         public int? CheckNo { get; set; }
+        public decimal WorkDay { get; set; }
     }
 }

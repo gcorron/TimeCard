@@ -19,33 +19,24 @@ namespace TimeCard.Repo.Repos
 
         public Lookup GetLookupByDescr(string group, string descr)
         {
-            using(var conn=GetOpenConnection())
-            {
-                return conn.QuerySingleOrDefault<Lookup>("sLookup", new { group, descr }, null, null, CommandType.StoredProcedure);
-            }
+            return QuerySingleSp<Lookup>("sLookup", new { group, descr });
         }
 
         public Lookup GetLookupByVal(string group, string val)
         {
-            using (var conn = GetOpenConnection())
-            {
-                return conn.QuerySingleOrDefault<Lookup>("sLookup", new { group, val }, null, null, CommandType.StoredProcedure);
-            }
+            return QuerySingleSp<Lookup>("sLookup", new { group, val });
         }
 
         public IEnumerable<Lookup> GetLookups(string group, string addFirstRow = null)
         {
-            using (var conn = GetOpenConnection())
+            var data = QuerySp<Lookup>("sLookup", new { group });
+            if (addFirstRow != null)
             {
-                var data = conn.Query<Lookup>("sLookup", new { group }, null, true, null, CommandType.StoredProcedure);
-                if (addFirstRow != null)
-                {
-                    return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
-                }
-                else
-                {
-                    return data;
-                }
+                return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);
+            }
+            else
+            {
+                return data;
             }
         }
 
