@@ -1,0 +1,95 @@
+﻿@model TimeCard.ViewModels.JobViewModel
+
+<style>
+    .job-col {
+        width:20%;
+    }
+</style>
+<div class="row mt-3" style="max-height:450px; overflow-y:auto; position:relative;">
+    <div class="col-md-12">
+        <table class="table table-sm table-striped table-hover">
+            <thead class="sticky">
+                <tr>
+                    <th class="job-col">Client</th>
+                    <th class="job-col">Project</th>
+                    <th class="job-col">Bill Type</th>
+                    <th class="job-col">Start Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ foreach (var job in Model.Jobs)
+                    {
+                        <tr class="work-row" data-edit="@(Json.Encode(new { job.JobId }))">
+                            <td>@job.Client</td>
+                            <td>@job.Project</td>
+                            <td>@job.BillTypeDescr</td>
+                            <td><span class="span-date">@($"{job.StartDate:MM/dd/yyyy}" )</span >
+                                <input type="date" class="form-control edit-date" placeholder="- None -" style="display:none;" />                            
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-default fa fa-pencil"></button>
+                                <button type="button" class="btn btn-default fa fa-check" style="display:none;"></button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@Html.HiddenFor(m => m.ContractorId)
+
+<script>
+    $(function () {
+        $("button.fa-pencil").click(function () {
+            hideEdit();
+            $(this).hide();
+            $(this).siblings().show();
+            var tr = $(this).closest('tr');
+            var span = tr.find('span.span-date')
+            var input = tr.find("input.edit-date");
+            var theDate = span.html();
+            if (theDate.length) {
+                theDate = theDate.substr(6, 4) + "-" + theDate.substr(0, 5).replace("/", "-");
+                input.val(theDate);
+            }
+            console.log(theDate);
+            span.hide();
+            input.show();
+        });
+        $("button.fa-check").click(function () {
+            var tr = $(this).closest('tr');
+            var jobId = tr.data("edit").JobId;
+            var span = tr.find('span.span-date')
+            var input = tr.find("input.edit-date");
+            var theDate = input.val();
+            if (theDate.length) {
+                theDate = theDate.substr(5, 5).replace("-", "/") + "/" + theDate.substr(0, 4);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "Job/SetJobDate",
+                data: { contractorId: @Model.ContractorId, jobId: jobId, theDate: theDate },
+                success: function () {
+                    span.html(theDate);
+                    hideEdit();
+                }
+            });
+
+        });
+
+    });
+
+    function hideEdit() {
+        $("button.fa-check").hide();
+        $("button.fa-pencil").show();
+        $("input.edit-date").hide();
+        $("span.span-date").show();
+    }
+</script>
+
+

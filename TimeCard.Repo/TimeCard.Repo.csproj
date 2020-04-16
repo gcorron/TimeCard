@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JobRepo.cs" />
     <Compile Include="Repos\BaseRepo.cs" />
     <Compile Include="Repos\LookupRepo.cs" />
     <Compile Include="Repos\PaymentRepo.cs" />
