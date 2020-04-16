@@ -78,7 +78,7 @@
                 <tbody>
                     @{ foreach (var entry in Model.WorkEntries)
                         {
-                            <tr class="work-row" data-edit="@(Json.Encode(new  { entry.WorkId, entry.JobId, entry.WorkDay }))">
+                            <tr class="work-row" data-edit="@(Json.Encode(new  { entry.WorkId, entry.JobId, entry.WorkDay,entry.WorkType }))">
                                 <td class="work-col-1">@entry.WorkDate</td>
                                 <td class="work-col-2">@entry.Job</td>
                                 <td class="work-col-1 text-right">@entry.Hours</td>
@@ -103,8 +103,10 @@
             $("#@Html.IdFor(m => m.EditWork.WorkId)").val(data.WorkId);
             $("#@Html.IdFor(m => m.EditWork.WorkDay)").val(data.WorkDay.toString());
             $("#@Html.IdFor(m => m.EditWork.JobId)").val(data.JobId);
-            $("#@Html.IdFor(m => m.EditWork.Hours)").val($(this).find('td').eq(2).html());
-            $("#@Html.IdFor(m => m.EditWork.Descr)").val($(this).find('td').eq(3).html());
+            var cells = $("tr.work-row td").map(function () { return $(this).text(); });
+            $("#@Html.IdFor(m => m.EditWork.Hours)").val(cells[2]);
+            $("#@Html.IdFor(m => m.EditWork.WorkType)").val(data.WorkType);
+            $("#@Html.IdFor(m => m.EditWork.Descr)").val(cells[4]);
             $("#divEdit").addClass("bg-info").removeClass("bg-success");
             showEditButtons();
         });

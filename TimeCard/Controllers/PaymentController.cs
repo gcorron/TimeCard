@@ -41,6 +41,15 @@ namespace TimeCard.Controllers
             switch(buttonValue)
             {
                 case "Save":
+
+                    if (vm.JobIsTimeCard)
+                    {
+                        if (vm.EditPayment.WorkDay == 0)
+                        {
+                            ModelState.AddModelError("EditPayment.WorkDay", "Please select Work Period");
+                        }
+                    }
+
                     if (ModelState.IsValid)
                     {
                         vm.EditPayment.ContractorId = vm.SelectedContractorId;
@@ -72,9 +81,18 @@ namespace TimeCard.Controllers
             vm.PaymentSummary = _PaymentRepo.GetSummary(vm.SelectedContractorId);
 
             vm.JobIsTimeCard= vm.SelectedJobId == 0 ? false : _PaymentRepo.JobIsTimeCard(vm.SelectedJobId);
-            if (vm.JobIsTimeCard)
+            vm.TimeCardsUnpaid = null;
+            vm.PaidThruWorkDay = 0;
+            if (vm.SelectedJobId !=0 && vm.SelectedContractorId !=0)
             {
-                vm.TimeCardsUnpaid = _PaymentRepo.GetJobTimeCardUnpaidCycles(vm.SelectedContractorId, vm.SelectedJobId);
+                if (vm.JobIsTimeCard)
+                {
+                    vm.TimeCardsUnpaid = _PaymentRepo.GetJobTimeCardUnpaidCycles(vm.SelectedContractorId, vm.SelectedJobId).Select(x => new SelectListItem {Text=x.ToString(), Value=x.WorkDay.ToString() } );
+                }
+                else if (vm.PaymentSummary.Any())
+                {
+                    vm.PaidThruWorkDay = _PaymentRepo.GetJobPaidThruDate(vm.SelectedContractorId, vm.SelectedJobId);
+                }
             }
             vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
             vm.Contractors = _LookupRepo.GetLookups("Contractor", "- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });

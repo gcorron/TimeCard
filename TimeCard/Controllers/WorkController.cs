@@ -40,6 +40,8 @@ namespace TimeCard.Controllers
                     {
                         var work = vm.EditWork;
                         _WorkRepo.SaveWork(work);
+                        vm.EditWork = null;
+                        ModelState.Clear();
                     }
                     break;
                 case "Delete":
