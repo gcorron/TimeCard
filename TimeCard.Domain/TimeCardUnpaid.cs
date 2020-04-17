@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeCard.Helpers;
 
 namespace TimeCard.Domain
 {
     public class TimeCardUnpaid
     {
-        private DateTime BaselineDate = new DateTime(2018, 12, 22);
         public decimal WorkDay { get; set; }
         public decimal Hours { get; set; }
         public override string ToString()
@@ -21,7 +21,7 @@ namespace TimeCard.Domain
             }
             else
             {
-                return $"{BaselineDate.AddDays((double)(cycle * 14 + (WorkDay - cycle) * 100)):MM/dd/yyyy} {Hours:n2}";
+                return $"{ DateRef.GetWorkDate(WorkDay):MM/dd/yyyy} {Hours:n2}";
             }
         }
     }

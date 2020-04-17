@@ -25,7 +25,8 @@ namespace TimeCard.Controllers
         public ActionResult Index()
         {
 
-            var vm = new ViewModels.WorkViewModel();
+            var vm = new ViewModels.WorkViewModel { Contractor = LookupRepo.GetLookupByVal("Contractor", CurrentUsername) };
+            Session["Contractor"] = vm.Contractor;
             prepWork(vm);
             return View(vm);
         }
@@ -60,13 +61,6 @@ namespace TimeCard.Controllers
 
         private void prepWork(ViewModels.WorkViewModel vm)
         {
-            Domain.Lookup contractor = Session["Contractor"] as Domain.Lookup;
-            if (contractor == null)
-            {
-                contractor = LookupRepo.GetLookupByVal("Contractor", CurrentUsername);
-                Session["Contractor"] = contractor;
-            }
-
             var cycles = GetPayCycles();
             int cycle = int.Parse(cycles.First().Value);
             vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
@@ -76,22 +70,36 @@ namespace TimeCard.Controllers
             {
                 vm.SelectedCycle = cycle;
             }
-            vm.WorkEntries = _WorkRepo.GetWork((Session["Contractor"] as Domain.Lookup).Id, vm.SelectedCycle, true);
+            vm.WorkEntries = _WorkRepo.GetWork(vm.Contractor.Id, vm.SelectedCycle, true);
             if (vm.EditWork == null)
             {
-                vm.EditWork = new Domain.Work { ContractorId = contractor.Id, WorkDay = DateRef.GetWorkDay(DateTime.Today) };
+                vm.EditWork = new Domain.Work { ContractorId = vm.Contractor.Id, WorkDay = DateRef.GetWorkDay(DateTime.Today) };
             }
             vm.EditDays = GetEditDays(vm.SelectedCycle);
         }
         private IEnumerable<SelectListItem> GetEditDays(int thisCycle)
         {
-            return Enumerable.Range(0, 14).Select(x => new SelectListItem { Text = DateRef.GetWorkDate(thisCycle + (decimal)x / 100, false), Value = (thisCycle + (decimal)x / 100).ToString() });
+            return Enumerable.Range(0, 14).Select(x => new SelectListItem { Text = $"{DateRef.GetWorkDate(thisCycle + (decimal)x / 100) :MM/dd}", Value = (thisCycle + (decimal)x / 100).ToString() });
         }
 
         private IEnumerable<SelectListItem> GetPayCycles()
         {
             var thisCycle = decimal.Floor(DateRef.GetWorkDay(DateTime.Today));
-            return Enumerable.Range(0, 15).Select(x => new SelectListItem { Text = DateRef.GetWorkDate(thisCycle - x), Value = (thisCycle - x).ToString() });
+            return Enumerable.Range(0, 15).Select(x => new SelectListItem { Text = $"{DateRef.GetWorkDate(thisCycle - x):MM/dd/yyyy}", Value = (thisCycle - x).ToString() });
+        }
+
+        [HttpPost]
+        public ActionResult WorkSummary(int contractorId)
+        {
+            var summary = _WorkRepo.GetWorkSummary(contractorId);
+            return PartialView("_WorkSummaryPeriod", summary);
+        }
+
+        [HttpPost]
+        public ActionResult WorkSummaryJob(int contractorId)
+        {
+            var summary = _WorkRepo.GetWorkSummary(contractorId);
+            return PartialView("_WorkSummaryJob", summary);
         }
 
         [HttpPost]

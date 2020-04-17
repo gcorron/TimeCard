@@ -1,9 +1,9 @@
 ﻿using System;
+using TimeCard.Helpers;
 namespace TimeCard.Domain
 {
     public class Job
     {
-        private DateTime BaselineDate = new DateTime(2018, 12, 22);
         public int JobId { get; set; }
         public int ClientId { get; set; }
         public int ProjectId { get; set; }
@@ -21,22 +21,12 @@ namespace TimeCard.Domain
                 {
                     return null;
                 }
-
-                int cycle = (int)Decimal.Floor(StartDay);
-                return BaselineDate.AddDays((double)(cycle * 14 + (StartDay - cycle) * 100));
+                return DateRef.GetWorkDate(StartDay);
             }
 
             set
             {
-                if (value == null || value < BaselineDate)
-                {
-                    StartDay = 0;
-                }
-                else
-                {
-                    int days = (value - BaselineDate).Value.Days;
-                    StartDay = days / 14 + (days % 14) * (decimal)0.01;
-                }
+                StartDay = DateRef.GetWorkDay(value);
             }
         }
     }

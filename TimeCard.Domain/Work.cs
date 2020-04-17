@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using TimeCard.Helpers;
 
 namespace TimeCard.Domain
 {
     public class Work
     {
-        private DateTime BaselineDate = new DateTime(2018,12,22);
         public int WorkId { get; set; }
         [Range(1,int.MaxValue,ErrorMessage = "Contractor ID required")]
         public int ContractorId { get; set; }
@@ -25,8 +25,7 @@ namespace TimeCard.Domain
         {
             get
             {
-                int cycle = (int)Decimal.Floor(WorkDay);
-                return $"{BaselineDate.AddDays((double)(cycle * 14 + (WorkDay - cycle) * 100)) : MM/dd}";
+                return $"{DateRef.GetWorkDate(WorkDay):MM/dd}";
             }
         }
     }

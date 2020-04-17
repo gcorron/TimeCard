@@ -1,11 +1,13 @@
-﻿CREATE procedure [dbo].[sPaymentSummary] @contractorId int, @workDay numeric(6,2)
+﻿CREATE procedure [dbo].[sPaymentSummary] @contractorId int
 as
--- exec sPaymentSummary 13,2
+-- exec sPaymentSummary 13
 ;with hourSummary (jobId, totalHours)
 as (
 select w.jobId, sum(hours)
 from work w join job j on w.jobid=j.jobid
-where contractorid=@contractorid and j.active=1 and workDay<@workDay
+left outer join jobStart js on j.jobId=js.jobId and js.contractorId=@contractorId
+where w.contractorid=@contractorid and j.active=1
+	and isnull(js.startDay,0)>0 and  w.workDay>=js.startDay
 group by w.jobId
 )
 
@@ -15,6 +17,8 @@ from job j
 	join lookup l2 on j.projectid=l2.id
 	join lookup l3 on j.billtype=l3.id
 	left outer join hourSummary h on j.jobId=h.jobId
-	left outer join payment p on j.jobid=p.jobId
+	left outer join jobStart js on j.jobid=js.jobId and js.contractorId=@contractorId
+	left outer join payment p on j.jobid=p.jobId and isnull(js.startDay,0)>0 and  p.workDay>=js.startDay
 where j.active=1 and not (h.totalHours is null)
+
 group by j.jobid, l1.descr, l2.descr, l3.descr,h.totalHours

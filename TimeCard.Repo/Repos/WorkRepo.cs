@@ -35,6 +35,11 @@ namespace TimeCard.Repo.Repos
             return QuerySp<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle, payCycles });
         }
 
+        public IEnumerable<WorkSummary> GetWorkSummary(int contractorId)
+        {
+            return QuerySp<WorkSummary>("sWorkSummary", new { contractorId });
+        }
+
         public IEnumerable<Lookup> GetJobs(string addFirstRow = null)
         {
             var data = QuerySp<Lookup>("sJob", null);

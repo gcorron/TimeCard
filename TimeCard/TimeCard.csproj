@@ -325,6 +325,8 @@
     <Content Include="Views\Payment\_EditPayment.cshtml" />
     <Content Include="Views\Payment\_PaymentSummary.cshtml" />
     <Content Include="Views\Job\Index.cshtml" />
+    <Content Include="Views\Work\_WorkSummaryPeriod.cshtml" />
+    <Content Include="Views\Work\_WorkSummaryJob.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

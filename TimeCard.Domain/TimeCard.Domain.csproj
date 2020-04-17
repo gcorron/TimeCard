@@ -50,6 +50,13 @@
     <Compile Include="TimeCardUnpaid.cs" />
     <Compile Include="Work.cs" />
     <Compile Include="WorkExtended.cs" />
+    <Compile Include="WorkSummary.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{791810bf-24c4-427f-80a2-8411233ce758}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
