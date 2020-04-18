@@ -31,8 +31,10 @@ namespace TimeCard.Controllers
             {
                 SelectedContractorId = CurrentUserId,
                 IsAdmin=false,
-                EditPayment = new Domain.Payment { ContractorId=CurrentUserId }
-            };
+                EditPayment = new Domain.Payment { ContractorId=CurrentUserId },
+                PaymentSummary = _PaymentRepo.GetSummary(CurrentUserId),
+                Payments = _PaymentRepo.GetPayments(CurrentUserId)
+        };
             prepPayment(vm);
             return View(vm);
         }
@@ -67,6 +69,8 @@ namespace TimeCard.Controllers
                     ModelState.Clear();
                     break;
                 case "Summary":
+                    vm.PaymentSummary = _PaymentRepo.GetSummary(vm.SelectedContractorId);
+                    vm.Payments = _PaymentRepo.GetPayments(vm.SelectedContractorId);
                     prepPayment(vm);
                     return PartialView("_PaymentSummary", vm);
                 default:
@@ -80,11 +84,8 @@ namespace TimeCard.Controllers
 
         private void prepPayment(PaymentViewModel vm)
         {
-            vm.PaymentSummary = _PaymentRepo.GetSummary(vm.SelectedContractorId);
-
             vm.JobIsTimeCard = false;
             vm.TimeCardsUnpaid = null;
-            vm.PaidThruWorkDay = 0;
             if (vm.SelectedJobId !=0 && vm.SelectedContractorId !=0)
             {
                 var job= _JobRepo.GetJob(vm.SelectedJobId);
@@ -94,18 +95,17 @@ namespace TimeCard.Controllers
                 {
                     vm.TimeCardsUnpaid = _PaymentRepo.GetJobTimeCardUnpaidCycles(vm.SelectedContractorId, vm.SelectedJobId).Select(x => new SelectListItem {Text=x.ToString(), Value=x.WorkDay.ToString() } );
                 }
-                else if (vm.PaymentSummary.Any())
+            }
+            if (vm.Payments == null)
+            {
+                if (vm.SelectedJobId == 0 || vm.SelectedContractorId == 0)
                 {
-                    vm.PaidThruWorkDay = _PaymentRepo.GetJobPaidThruDate(vm.SelectedContractorId, vm.SelectedJobId);
+                    vm.Payments = Enumerable.Empty<Domain.Payment>();
                 }
-            }
-            if (vm.SelectedJobId == 0 || vm.SelectedContractorId == 0)
-            {
-                vm.Payments = Enumerable.Empty<Domain.Payment>();
-            }
-            else
-            {
-                vm.Payments = _PaymentRepo.GetPayments(vm.SelectedContractorId, vm.SelectedJobId);
+                else
+                {
+                    vm.Payments = _PaymentRepo.GetPaymentsForJob(vm.SelectedContractorId, vm.SelectedJobId);
+                }
             }
         }
     }

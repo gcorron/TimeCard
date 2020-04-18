@@ -44,7 +44,7 @@
                         <th style="width:15%;">Date</th>
                         <th class="text-right" style="width:15%;">Hours</th>
                         <th style="width:15%;">Check No.</th>
-                        <th>@(Model.JobIsTimeCard ? "Work Period" : "Paid Thru")</th>
+                        <th>@(Model.JobIsTimeCard ? "Work Period" : "")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +56,7 @@
                                 <td style="width:15%;">@($"{payment.PayDate:MM/dd/yyyy}")</td>
                                 <td style="width:15%;" class="text-right">@payment.Hours</td>
                                 <td style="width:15%;">@payment.CheckNo</td>
-                                <td>@(Model.WorkDate(Model.JobIsTimeCard ? payment.WorkDay : i == j ? Model.PaidThruWorkDay : 0)) </td>
+                                <td>@(Model.WorkDate(Model.JobIsTimeCard ? payment.WorkDay : 0)) </td>
                             </tr>
                         }
                     }

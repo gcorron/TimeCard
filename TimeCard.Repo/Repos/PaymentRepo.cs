@@ -16,14 +16,17 @@ namespace TimeCard.Repo.Repos
 
         public IEnumerable<PaymentSummary> GetSummary(int contractorId)
         {
-                var data= QuerySp<PaymentSummary>("sPaymentSummary", new { contractorId });
-                var total = new PaymentSummary { Billed = data.Sum(x => x.Billed), Paid = data.Sum(x => x.Paid), BillType = "Total" };
-                return data.Union(Enumerable.Repeat(total, 1));
+                return QuerySp<PaymentSummary>("sPaymentSummary", new { contractorId });
         }
 
-        public IEnumerable<Payment> GetPayments(int contractorId, int jobId)
+        public IEnumerable<Payment> GetPaymentsForJob(int contractorId, int jobId)
         {
-            return QuerySp<Payment>("sPayment", new { contractorId, jobId });
+            return QuerySp<Payment>("sPaymentsJob", new { contractorId, jobId });
+        }
+
+        public IEnumerable<Payment> GetPayments(int contractorId)
+        {
+            return QuerySp<Payment>("sPayments", new { contractorId });
         }
 
         public void SavePayment(Payment payment)

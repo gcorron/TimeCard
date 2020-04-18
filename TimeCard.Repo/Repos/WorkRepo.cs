@@ -42,7 +42,7 @@ namespace TimeCard.Repo.Repos
 
         public IEnumerable<Lookup> GetJobs(string addFirstRow = null)
         {
-            var data = QuerySp<Lookup>("sJob", null);
+            var data = QuerySp<Lookup>("sJobs", null);
             if (addFirstRow != null)
             {
                 return new Lookup[] { new Lookup { Id = 0, Descr = addFirstRow } }.Union(data);

@@ -18,5 +18,18 @@ namespace TimeCard.Domain
         public decimal Balance { get => Billed - Paid; }
         public decimal StartDay { get; set; }
         public string StartDate { get => $"{DateRef.GetWorkDate(StartDay):MM/dd/yyyy}"; }
+        public decimal PaidThruDay { get; set; }
+        public string PaidThruDate { get
+            {
+                if (PaidThruDay == 0 )
+                {
+                    return "Current";
+                }
+                else
+                {
+                    return $"{DateRef.GetWorkDate(PaidThruDay):MM/dd/yyyy}";
+                }
+            }
+        }
     }
 }

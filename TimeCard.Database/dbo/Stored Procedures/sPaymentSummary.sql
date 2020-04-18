@@ -12,6 +12,7 @@ group by w.jobId
 )
 
 select j.jobid, js.startday, l1.descr client, l2.descr project, l3.descr billtype, isnull(h.totalHours,0) billed, isnull(sum(p.hours),0) paid
+	,(select isnull(dbo.fJobPaidThruDate(@contractorId, j.jobId),0)) paidThruDay
 from job j
 	join lookup l1 on j.clientid=l1.id
 	join lookup l2 on j.projectid=l2.id

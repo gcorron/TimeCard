@@ -21,7 +21,6 @@ namespace TimeCard.ViewModels
         public Payment EditPayment { get; set; }
         public IEnumerable<Payment>Payments { get; set; }
         public IEnumerable<SelectListItem> TimeCardsUnpaid { get; set; }
-        public decimal PaidThruWorkDay { get; set; }
         public string WorkDate(decimal workDay)
         {
             if (workDay == 0 )
