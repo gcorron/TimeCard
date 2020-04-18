@@ -8,6 +8,7 @@ set @hours=isnull((select sum(hours) from payment where contractorId=@contractor
 ;with cte(workDay, hours, running) as
 (
 select workDay, hours,running=sum(hours) over(order by workDay, workId ROWS UNBOUNDED PRECEDING)
- from work where contractorid=@contractorId and jobid=@jobId
+ from work w join JobStart js on w.contractorId=js.contractorId and w.jobId=js.jobId
+ where w.contractorid=@contractorId and w.jobid=@jobId and w.workDay>=js.startDay
 )
 select top 1 workDay from cte where running<=@hours order by workDay desc

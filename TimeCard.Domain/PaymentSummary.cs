@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeCard.Helpers;
 
 namespace TimeCard.Domain
 {
@@ -15,5 +16,7 @@ namespace TimeCard.Domain
         public decimal Billed { get; set; }
         public decimal Paid { get; set; }
         public decimal Balance { get => Billed - Paid; }
+        public decimal StartDay { get; set; }
+        public string StartDate { get => $"{DateRef.GetWorkDate(StartDay):MM/dd/yyyy}"; }
     }
 }

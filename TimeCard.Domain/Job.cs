@@ -5,6 +5,7 @@ namespace TimeCard.Domain
     public class Job
     {
         public int JobId { get; set; }
+        public string Descr { get; set; }
         public int ClientId { get; set; }
         public int ProjectId { get; set; }
         public int BillType { get; set; }

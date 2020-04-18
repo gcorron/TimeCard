@@ -36,11 +36,6 @@ namespace TimeCard.Repo.Repos
             ExecuteSp("dPayment", new { payId });
         }
 
-        public bool JobIsTimeCard(int jobId)
-        {
-            return QuerySingleSp<bool>("sJobIsTimeCard", new { jobId });
-        }
-
         public IEnumerable<TimeCardUnpaid> GetJobTimeCardUnpaidCycles(int contractorId, int jobId)
         {
             return Enumerable.Repeat(new TimeCardUnpaid(),1).Union(QuerySp<TimeCardUnpaid>("sJobTimeCardUnpaidCycles",new { contractorId, jobId }));

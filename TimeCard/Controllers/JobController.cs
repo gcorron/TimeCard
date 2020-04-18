@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using TimeCard.Repo;
+using TimeCard.Repo.Repos;
 
 namespace TimeCard.Controllers
 {

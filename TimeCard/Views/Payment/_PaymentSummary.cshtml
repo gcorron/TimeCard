@@ -4,24 +4,26 @@
         <table class="table table-sm table-striped table-hover">
             <thead class="sticky">
                 <tr>
-                    <th>Client</th>
-                    <th>Project</th>
-                    <th>Bill Type</th>
-                    <th>Billed</th>
-                    <th>Paid</th>
-                    <th>Balance</th>
+                    <th style="width:15%;">Client</th>
+                    <th style="width:15%;">Project</th>
+                    <th style="width:7%;">Bill Type</th>
+                    <th style="width:7%;">Billed</th>
+                    <th style="width:7%;">Paid</th>
+                    <th style="width:7%;">Balance</th>
+                    <th>Starting Date</th>
                 </tr>
             </thead>
             <tbody>
                 @{ foreach (var summary in Model.PaymentSummary)
                     {
                         <tr class="summary-row" data-edit="@(Json.Encode(new  { summary.JobId }))">
-                            <td style="width:15%;">@summary.Client</td>
-                            <td style="width:15%;">@summary.Project</td>
-                            <td style="width:7%;">@summary.BillType</td>
-                            <td style="width:7%;">@summary.Billed</td>
-                            <td style="width:7%;">@summary.Paid</td>
-                            <td style="width:7%;">@summary.Balance</td>
+                            <td>@summary.Client</td>
+                            <td >@summary.Project</td>
+                            <td>@summary.BillType</td>
+                            <td>@summary.Billed</td>
+                            <td>@summary.Paid</td>
+                            <td>@summary.Balance</td>
+                            <td>@summary.StartDate</td>
                         </tr>
                     }
                 }

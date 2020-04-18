@@ -2,22 +2,14 @@
 
 @using (Ajax.BeginForm("Index", null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "edit", OnFailure = "console.log('Server ajax error');" }, new { id = "formPayment" }))
 {
+    @Html.HiddenFor(m => m.SelectedContractorId)
+    @Html.HiddenFor(m => m.SelectedJobId)
+
     <div class="card mt-3">
-        <div class="card-header">
-            <div class="form-group row align-self-center">
-                @{ if (Model.IsAdmin)
-                    {
-                        <div class="col-md-2 col-form-label text-right">Contractor</div>
-                        <div class="col-md-3">@Html.DropDownListFor(m => m.SelectedContractorId, Model.Contractors, new { @class = "form-control" })</div>
-                    }
-                    else
-                    {
-                        @Html.HiddenFor(m => m.SelectedContractorId)
-                    }
-                }
-                <div class="col-md-1 col-form-label text-right">Job</div>
-                <div class="col-md-3">@Html.DropDownListFor(m => m.SelectedJobId, Model.Jobs, new { @class = "form-control" })</div>
-            </div>
+        <div class="card-header form-group row">
+            <div class="col-md-2">@(Model.SelectedJob?.Client)</div>
+            <div class="col-md-2">@(Model.SelectedJob?.Project)</div>
+            <div class="col-md-2">@(Model.SelectedJob?.BillTypeDescr)</div>
         </div>
         <div class="card-body @(Model.EditPayment.PayId == 0 ? "bg-success" : "bg-info" )" id="divEdit" style=@(Model.CanEdit ? "" : "display:none;")>
             <div class="form-group form-row">

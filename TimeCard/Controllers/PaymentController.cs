@@ -12,12 +12,14 @@ namespace TimeCard.Controllers
     {
         private readonly PaymentRepo _PaymentRepo;
         private readonly WorkRepo _WorkRepo;
+        private readonly JobRepo _JobRepo;
         private readonly LookupRepo _LookupRepo;
 
         public PaymentController()
         {
             _PaymentRepo = new PaymentRepo(ConnString);
             _WorkRepo = new WorkRepo(ConnString);
+            _JobRepo = new JobRepo(ConnString);
             _LookupRepo = new LookupRepo(ConnString);
         }
 
@@ -80,11 +82,14 @@ namespace TimeCard.Controllers
         {
             vm.PaymentSummary = _PaymentRepo.GetSummary(vm.SelectedContractorId);
 
-            vm.JobIsTimeCard= vm.SelectedJobId == 0 ? false : _PaymentRepo.JobIsTimeCard(vm.SelectedJobId);
+            vm.JobIsTimeCard = false;
             vm.TimeCardsUnpaid = null;
             vm.PaidThruWorkDay = 0;
             if (vm.SelectedJobId !=0 && vm.SelectedContractorId !=0)
             {
+                var job= _JobRepo.GetJob(vm.SelectedJobId);
+                vm.SelectedJob = job;
+                vm.JobIsTimeCard = (job.BillTypeDescr == "TC");
                 if (vm.JobIsTimeCard)
                 {
                     vm.TimeCardsUnpaid = _PaymentRepo.GetJobTimeCardUnpaidCycles(vm.SelectedContractorId, vm.SelectedJobId).Select(x => new SelectListItem {Text=x.ToString(), Value=x.WorkDay.ToString() } );
@@ -94,8 +99,6 @@ namespace TimeCard.Controllers
                     vm.PaidThruWorkDay = _PaymentRepo.GetJobPaidThruDate(vm.SelectedContractorId, vm.SelectedJobId);
                 }
             }
-            vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
-            vm.Contractors = _LookupRepo.GetLookups("Contractor", "- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
             if (vm.SelectedJobId == 0 || vm.SelectedContractorId == 0)
             {
                 vm.Payments = Enumerable.Empty<Domain.Payment>();

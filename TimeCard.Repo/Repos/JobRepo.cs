@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeCard.Domain;
 
-namespace TimeCard.Repo
+namespace TimeCard.Repo.Repos
 {
     public class JobRepo : BaseRepo
     {
@@ -23,6 +23,12 @@ namespace TimeCard.Repo
         {
             ExecuteSp("uJobStart", new { contractorId, jobId, startDay });
         }
+
+        public Job GetJob(int jobId)
+        {
+            return QuerySingleSp<Job>("sJob", new { jobId });
+        }
+
 
     }
 }

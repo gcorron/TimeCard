@@ -11,11 +11,11 @@ namespace TimeCard.ViewModels
     {
         private DateTime BaselineDate = new DateTime(2018, 12, 22);
         public IEnumerable<PaymentSummary> PaymentSummary { get; set; }
-        public IEnumerable<SelectListItem> Jobs { get; set; }
-        public IEnumerable<SelectListItem> Contractors { get; set; }
-        public int SelectedJobId { get; set; }
+
         public bool JobIsTimeCard { get; set; }
         public int SelectedContractorId { get; set; }
+        public int SelectedJobId { get; set; }
+        public Job SelectedJob { get; set; }
         public bool CanEdit { get => !(SelectedJobId == 0 || SelectedContractorId == 0); }
         public bool IsAdmin { get; set; }
         public Payment EditPayment { get; set; }
