@@ -34,5 +34,12 @@ namespace TimeCard.Helpers
             DateTime refDate = DateTime.Parse(BaselineDate);
             return refDate.AddDays((double)(cycle * 14 + (workDay - cycle) * 100));
         }
+
+        public static DateTime PeriodEndDate(decimal workDay)
+        {
+            int cycle = (int)Decimal.Floor(workDay);
+            DateTime refDate = DateTime.Parse(BaselineDate);
+            return refDate.AddDays((double)(cycle * 14 + 13));
+        }
     }
 }

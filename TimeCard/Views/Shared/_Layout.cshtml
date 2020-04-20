@@ -13,15 +13,19 @@
     @Styles.Render("~/Content/fontawesome")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm bg-light fixed-top">
+    <nav class="navbar navbar-expand-sm navbar-dark fixed-top", style="background-color:darkmagenta">
         @Html.ActionLink("TimeCard", "Index", "Work", new { area = "" }, new { @class = "navbar-brand" })
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item">
-                    @Html.ActionLink("Work", "Index", "Work")
-                    @Html.ActionLink("Payment", "Index", "Payment")
-                    @Html.ActionLink("Jobs", "Index", "Job")
+                <li class="nav-item nav-select-default">
+                    @Html.ActionLink("Work", "Index", "Work",null, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item nav-select-payment">
+                    @Html.ActionLink("Payment", "Index", "Payment", null, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item nav-select-job">
+                    @Html.ActionLink("Jobs", "Index", "Job", null, new { @class = "nav-link" })
                 </li>
             </ul>
         </div>
@@ -31,7 +35,7 @@
             @{ var contractor = Session["Contractor"] as TimeCard.Domain.Lookup;
                 if (contractor != null)
                 {
-                    <div class="col-md-6 ml-auto text-right">You are logged in as @contractor.Descr</div>
+                    <div class="col-md-6 ml-auto mt-2 text-right">You are logged in as @contractor.Descr</div>
                 }
 
             }
@@ -40,10 +44,25 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - TimeCard</p>
         </footer>
     </div>
 
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<script>
+    $(function () {
+        switch (location.pathname) {
+            case "/Payment":
+                $("li.nav-select-payment").addClass("active");
+                break;
+            case "/Job":
+                $("li.nav-select-job").addClass("active");
+                break;
+            default:
+                $("li.nav-select-default").addClass("active");
+        }
+
+    });
+</script>

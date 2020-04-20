@@ -11,14 +11,14 @@
                 </tr>
             </thead>
             <tbody>
-                @{ foreach (var group in Model.OrderBy(x => x.WorkPeriod).ThenBy(x => x.Job).GroupBy(x => x.WorkPeriod))
+                @{ foreach (var group in Model.OrderBy(x => x.WorkPeriod).ThenBy(x => x.Descr).GroupBy(x => x.WorkPeriod))
                     {
                         int i = 0;
                         foreach (var row in group)
                         {
                             <tr>
                                 @Html.Raw(i == 0 ? $"<td rowspan=\"{group.Count()}\"</td>{row.WorkPeriodDescr}</td>" : "")
-                                <td>@row.Job</td>
+                                <td>@row.Descr</td>
                                 <td class="hours-col text-right">@row.Hours</td>
                                 @Html.Raw(i == 0 ? $"<td class=\"hours-col text-right align-bottom\" rowspan=\"{group.Count()}\"</td>{group.Sum(x => x.Hours)}</td>" : "")
                             </tr>

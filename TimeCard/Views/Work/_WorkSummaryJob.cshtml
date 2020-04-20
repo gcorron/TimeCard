@@ -11,7 +11,7 @@
                 </tr>
             </thead>
             <tbody>
-                @{ foreach (var group in Model.OrderBy(x => x.Job).ThenBy(x => x.WorkPeriod).GroupBy(x => x.JobId))
+                @{ foreach (var group in Model.OrderBy(x => x.Descr).ThenBy(x => x.WorkPeriod).GroupBy(x => x.JobId))
                     {
                         int i = 0;
                         decimal total = 0;
@@ -19,7 +19,7 @@
                         {
                             total += row.Hours;
                     <tr>
-                        @Html.Raw(i == 0 ? $"<td rowspan=\"{group.Count()}\"</td>{row.Job}</td>" : "")
+                        @Html.Raw(i == 0 ? $"<td rowspan=\"{group.Count()}\"</td>{row.Descr}</td>" : "")
                         <td>@row.WorkPeriodDescr</td>
                         <td class="hours-col text-right">@row.Hours</td>
                         <td class="hours-col text-right @(i == group.Count() - 1 ? "font-weight-bold" :  "")">@total</td>

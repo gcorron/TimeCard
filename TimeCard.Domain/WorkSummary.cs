@@ -14,6 +14,6 @@ namespace TimeCard.Domain
         public string shortDescr { get; set; }
         public decimal WorkPeriod { get; set; }
         public decimal Hours { get; set; }
-        public string WorkPeriodDescr { get => $"{DateRef.GetWorkDate(WorkPeriod): MM/dd/yyyy}"; }
+        public string WorkPeriodDescr { get => $"{DateRef.PeriodEndDate(WorkPeriod): MM/dd/yyyy}"; }
     }
 }

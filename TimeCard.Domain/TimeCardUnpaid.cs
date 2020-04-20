@@ -21,7 +21,7 @@ namespace TimeCard.Domain
             }
             else
             {
-                return $"{ DateRef.GetWorkDate(WorkDay):MM/dd/yyyy} {Hours:n2}";
+                return $"{ DateRef.PeriodEndDate(WorkDay):MM/dd/yyyy} {Hours:n2}";
             }
         }
     }

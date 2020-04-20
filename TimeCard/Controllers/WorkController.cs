@@ -87,7 +87,7 @@ namespace TimeCard.Controllers
         private IEnumerable<SelectListItem> GetPayCycles()
         {
             var thisCycle = decimal.Floor(DateRef.GetWorkDay(DateTime.Today));
-            return Enumerable.Range(0, 15).Select(x => new SelectListItem { Text = $"{DateRef.GetWorkDate(thisCycle - x):MM/dd/yyyy}", Value = (thisCycle - x).ToString() });
+            return Enumerable.Range(0, 15).Select(x => new SelectListItem { Text = $"{DateRef.PeriodEndDate(thisCycle - x):MM/dd/yyyy}", Value = (thisCycle - x).ToString() });
         }
 
         [HttpPost]
