@@ -61,6 +61,7 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Views\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Work.sql" />
@@ -88,5 +89,6 @@
     <Build Include="dbo\Functions\fJobPaidThruDate.sql" />
     <Build Include="dbo\Stored Procedures\sPaymentsJob.sql" />
     <Build Include="dbo\Stored Procedures\sPayments.sql" />
+    <Build Include="dbo\Views\vJob.sql" />
   </ItemGroup>
 </Project>

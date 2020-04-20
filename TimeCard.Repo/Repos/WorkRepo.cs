@@ -30,9 +30,9 @@ namespace TimeCard.Repo.Repos
             ExecuteSp("dWork", new { workId });
         }
 
-        public IEnumerable<WorkExtended> GetWorkExtended(int contractorId, decimal workDay, bool payCycle, int payCycles)
+        public IEnumerable<WorkExtended> GetWorkExtended(int contractorId, decimal workDay, bool payCycle)
         {
-            return QuerySp<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle, payCycles });
+            return QuerySp<WorkExtended>("sWorkExtended", new { contractorId, workDay, payCycle });
         }
 
         public IEnumerable<WorkSummary> GetWorkSummary(int contractorId)

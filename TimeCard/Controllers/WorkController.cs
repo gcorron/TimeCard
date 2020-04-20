@@ -14,11 +14,13 @@ namespace TimeCard.Controllers
     public class WorkController : BaseController
     {
         private readonly WorkRepo _WorkRepo;
+        private readonly PaymentRepo _PaymentRepo;
         private readonly LookupRepo _LookupRepo;
 
         public WorkController()
         {
             _WorkRepo = new WorkRepo(ConnString);
+            _PaymentRepo = new PaymentRepo(ConnString);
             _LookupRepo = new LookupRepo(ConnString);
         }
 
@@ -34,7 +36,7 @@ namespace TimeCard.Controllers
         [HttpPost]
         public ActionResult Index(ViewModels.WorkViewModel vm, string buttonValue)
         {
-            switch(buttonValue)
+            switch (buttonValue)
             {
                 case "Save":
                     if (ModelState.IsValid)
@@ -64,7 +66,7 @@ namespace TimeCard.Controllers
             var cycles = GetPayCycles();
             int cycle = int.Parse(cycles.First().Value);
             vm.Jobs = _WorkRepo.GetJobs("- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
-            vm.WorkTypes = _LookupRepo.GetLookups("WorkType","- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
+            vm.WorkTypes = _LookupRepo.GetLookups("WorkType", "- Select -").Select(x => new SelectListItem { Text = x.Descr, Value = x.Id.ToString() });
             vm.PayCycles = cycles;
             if (vm.SelectedCycle == 0)
             {
@@ -79,7 +81,7 @@ namespace TimeCard.Controllers
         }
         private IEnumerable<SelectListItem> GetEditDays(int thisCycle)
         {
-            return Enumerable.Range(0, 14).Select(x => new SelectListItem { Text = $"{DateRef.GetWorkDate(thisCycle + (decimal)x / 100) :MM/dd}", Value = (thisCycle + (decimal)x / 100).ToString() });
+            return Enumerable.Range(0, 14).Select(x => new SelectListItem { Text = $"{DateRef.GetWorkDate(thisCycle + (decimal)x / 100):MM/dd}", Value = (thisCycle + (decimal)x / 100).ToString() });
         }
 
         private IEnumerable<SelectListItem> GetPayCycles()
@@ -115,6 +117,7 @@ namespace TimeCard.Controllers
                 GenerateTimeCards(contractorId, name, templateFile, cycle, fileList);
                 GenerateTimeBooks(contractorId, name, templateFile, cycle, fileList);
                 GenerateInvoices(contractorId, name, templateFile, cycle, fileList);
+                GenerateSummary(contractorId, name, templateFile, cycle, fileList);
                 if (!fileList.Any())
                 {
                     return Json(new { success = false, message = "Nothing to generate." });
@@ -136,7 +139,7 @@ namespace TimeCard.Controllers
         {
             const int blankRow = 11;
 
-            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true, 1).Where(x => x.BillType == "TC")
+            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true).Where(x => x.BillType == "TC")
                 .GroupBy(g => new { g.ClientId, g.ProjectId });
 
 
@@ -193,8 +196,11 @@ namespace TimeCard.Controllers
                             }
                             sheet.Calculate();
                         }
-                        package.Save();
-                        fileList.Add(package.File.FullName);
+                        if (package.Workbook.Worksheets.Any())
+                        {
+                            package.Save();
+                            fileList.Add(package.File.FullName);
+                        }
                     }
                 }
             }
@@ -202,13 +208,13 @@ namespace TimeCard.Controllers
 
         public void GenerateTimeBooks(int contractorId, string name, FileInfo templateFile, int cycle, List<string> fileList)
         {
-            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true, 10).Where(x => "SOW TB".Contains(x.BillType))
+            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true).Where(x => "SOW TB".Contains(x.BillType))
                 .GroupBy(g => new { g.ClientId, g.ProjectId });
 
             using (var templatePackage = new ExcelPackage(templateFile))
             {
                 var templateSheet = templatePackage.Workbook.Worksheets["TimeBook"];
-                var file = new FileInfo($"C:\\TEMP\\FWSI_TimeBooks.xlsx");
+                var file = new FileInfo($"C:\\TEMP\\{name}_TimeBooks.xlsx");
                 System.IO.File.Delete(file.FullName);
 
                 using (var package = new ExcelPackage(file))
@@ -218,7 +224,7 @@ namespace TimeCard.Controllers
                         var first = tb.First();
                         var workBook = package.Workbook;
                         int currentRow = 2;
-                        ExcelWorksheet sheet = workBook.Worksheets.Add($"{first.Client} {first.Project}",templateSheet);
+                        ExcelWorksheet sheet = workBook.Worksheets.Add($"{first.Client} {first.Project}", templateSheet);
                         foreach (var entry in tb)
                         {
                             sheet.Cells[currentRow, 1].Value = $"{entry.WorkDate:MM/dd/yyyy}";
@@ -228,8 +234,11 @@ namespace TimeCard.Controllers
                             currentRow++;
                         }
                     }
-                    package.Save();
-                    fileList.Add(package.File.FullName);
+                    if (package.Workbook.Worksheets.Any())
+                    {
+                        package.Save();
+                        fileList.Add(package.File.FullName);
+                    }
                 }
             }
         }
@@ -237,13 +246,13 @@ namespace TimeCard.Controllers
         public void GenerateInvoices(int contractorId, string name, FileInfo templateFile, int cycle, List<string> fileList)
         {
             int blankRow = 14;
-            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true, 1).Where(x => "TB".Contains(x.BillType))
+            var workEntries = _WorkRepo.GetWorkExtended(contractorId, cycle, true).Where(x => "TB".Contains(x.BillType))
                 .GroupBy(g => new { g.ClientId, g.ProjectId });
 
             using (var templatePackage = new ExcelPackage(templateFile))
             {
                 var templateSheet = templatePackage.Workbook.Worksheets["Invoice"];
-                var file = new FileInfo($"C:\\TEMP\\FWSI_Invoices.xlsx");
+                var file = new FileInfo($"C:\\TEMP\\{name}_Invoices.xlsx");
                 System.IO.File.Delete(file.FullName);
 
                 using (var package = new ExcelPackage(file))
@@ -263,23 +272,110 @@ namespace TimeCard.Controllers
                             sheet.InsertRow(currentRow, 1);
                             sheet.Cells[blankRow, 1, blankRow, 10].Copy(sheet.Cells[currentRow, 1]);
 
-                            sheet.Cells[currentRow, 2].Value = $"{entry.WorkDate : M/d}";
+                            sheet.Cells[currentRow, 2].Value = $"{entry.WorkDate: M/d}";
                             sheet.Cells[currentRow, 3].Value = $"{entry.WorkType} : {entry.Descr}";
                             sheet.Cells[currentRow, 4].Value = entry.Hours;
                             sheet.Cells[currentRow, 6].Formula = $"=D{currentRow} * C11";
                             currentRow++;
                         }
-                        sheet.Cells[currentRow, 4].Formula = $"=SUM(D{blankRow} : D{currentRow-1})";
-                        sheet.Cells[currentRow, 6].Formula = $"=SUM(F{blankRow} : F{currentRow-1})";
+                        sheet.Cells[currentRow, 4].Formula = $"=SUM(D{blankRow} : D{currentRow - 1})";
+                        sheet.Cells[currentRow, 6].Formula = $"=SUM(F{blankRow} : F{currentRow - 1})";
                         sheet.Calculate();
                     }
-                    
-                    package.Save();
-                    fileList.Add(package.File.FullName);
+                    if (package.Workbook.Worksheets.Any())
+                    {
+                        package.Save();
+                        fileList.Add(package.File.FullName);
+                    }
                 }
             }
         }
 
+        public void GenerateSummary(int contractorId, string name, FileInfo templateFile, int cycle, List<string> fileList)
+        {
+            var workSummary = _WorkRepo.GetWorkSummary(contractorId);
+            var file = new FileInfo($"C:\\TEMP\\{name}_Summary.xlsx");
+            System.IO.File.Delete(file.FullName);
+            using (var templatePackage = new ExcelPackage(templateFile))
+            {
+                var templateSheet = templatePackage.Workbook.Worksheets["Summary"];
+
+                using (var package = new ExcelPackage(file))
+                {
+                    var workBook = package.Workbook;
+                    ExcelWorksheet sheet = workBook.Worksheets.Add("Summary",templateSheet);
+                    int currentRow = 2;
+                    foreach (var group in workSummary.OrderBy(x => x.Descr).ThenBy(x => x.WorkPeriod).GroupBy(x => x.JobId))
+                    {
+                        int i = 0;
+                        decimal total = 0;
+                        foreach (var row in group)
+                        {
+                            total += row.Hours;
+                            sheet.InsertRow(currentRow, 1, currentRow);
+                            sheet.Cells[currentRow, 2].Value = row.WorkPeriodDescr;
+                            sheet.Cells[currentRow, 3].Value = row.Hours;
+                            sheet.Cells[currentRow, 4].Value = total;
+                            sheet.Cells[currentRow, 3].Style.Numberformat.Format = "0.00";
+                            sheet.Cells[currentRow, 4].Style.Numberformat.Format = "0.00";
+                            if (i == group.Count() - 1)
+                            {
+                                sheet.Cells[currentRow, 4].Style.Font.Bold = true;
+                                sheet.Cells[$"A{currentRow - group.Count() + 1}:A{currentRow}"].Merge = true;
+                                sheet.Cells[currentRow - group.Count() + 1,1].Value = row.Descr;
+                            }
+                            i++;
+                            currentRow++;
+                        }
+                    }
+                    currentRow += 5;
+                    var paySummary = _PaymentRepo.GetSummary(contractorId);
+                    var payments = _PaymentRepo.GetPayments(contractorId);
+                    foreach (var summary in paySummary)
+                    {
+                        sheet.InsertRow(currentRow, 1, currentRow);
+                        sheet.Cells[currentRow, 1].Value = summary.Client;
+                        sheet.Cells[currentRow, 2].Value = summary.Project;
+                        sheet.Cells[currentRow, 3].Value = summary.BillType;
+                        sheet.Cells[currentRow, 4].Value = summary.Billed;
+                        sheet.Cells[currentRow, 5].Value = summary.Paid;
+                        sheet.Cells[currentRow, 6].Value = summary.Balance;
+                        sheet.Cells[currentRow, 7].Value = summary.StartDate;
+                        sheet.Cells[currentRow, 8].Value = summary.PaidThruDate;
+                        var jobPayments = payments.Where(x => x.JobId == summary.JobId);
+                        if (jobPayments.Any())
+                        {
+                            foreach (var jp in jobPayments)
+                            {
+                                sheet.Cells[currentRow, 9].Value = jp.Hours;
+                                sheet.Cells[currentRow, 10].Value = $"{jp.PayDate:MM/dd/yyyy}";
+                                sheet.Cells[currentRow, 11].Value = jp.CheckNo;
+                                currentRow++;
+                                sheet.InsertRow(currentRow, 1, currentRow);
+                            }
+                            if (jobPayments.Count()>1)
+                            {
+                                for(int i=0;i<=7;i++)
+                                {
+                                    char col = "ABCDEFGH"[i];
+                                    sheet.Cells[$"{col}{currentRow - jobPayments.Count()}:{col}{currentRow-1}"].Merge = true;
+                                }
+                                sheet.Cells[$"A{currentRow - jobPayments.Count()}:H{currentRow - 1}"].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Top;
+                            }
+                        }
+                        else
+                        {
+                            currentRow++;
+                        }
+                    }
+                    if (package.Workbook.Worksheets.Any())
+                    {
+                        package.Save();
+                        fileList.Add(package.File.FullName);
+                    }
+                }
+            }
+        }
 
 
         [HttpGet]

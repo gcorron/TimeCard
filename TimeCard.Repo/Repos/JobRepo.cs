@@ -19,9 +19,9 @@ namespace TimeCard.Repo.Repos
             return QuerySp<Job>("sJobStart", new { contractorId });
         }
 
-        public void UpdateJobStart(int contractorId, int jobId, decimal startDay)
+        public void UpdateJobStart(int contractorId, int jobId, decimal startDay, bool isNew)
         {
-            ExecuteSp("uJobStart", new { contractorId, jobId, startDay });
+            ExecuteSp("uJobStart", new { contractorId, jobId, startDay, isNew });
         }
 
         public Job GetJob(int jobId)

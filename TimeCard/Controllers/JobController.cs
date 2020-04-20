@@ -23,7 +23,7 @@ namespace TimeCard.Controllers
             return View(new ViewModels.JobViewModel{ ContractorId=contractorId, Jobs=jobs });
         }
 
-        public void SetJobDate(int contractorId, int jobId, string theDate)
+        public void SetJobDate(int contractorId, int jobId, string theDate, bool isNew)
         {
             decimal startDay=0;
             if (!String.IsNullOrEmpty(theDate))
@@ -33,8 +33,7 @@ namespace TimeCard.Controllers
                 int days = (startDate - BaselineDate).Days;
                 startDay = days / 14 + (days % 14) * (decimal)0.01;
             }
-            _JobRepo.UpdateJobStart(contractorId, jobId, startDay);
-
+            _JobRepo.UpdateJobStart(contractorId, jobId, startDay, isNew);
         }
     }
 }

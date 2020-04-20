@@ -8,7 +8,6 @@ namespace TimeCard.Domain
         public int WorkId { get; set; }
         public int ContractorId { get; set; }
         public int JobId { get; set; }
-        public string Job { get; set; }
         public decimal WorkDay { get; set; }
         public string Descr { get; set; }
         public decimal Hours { get; set; }
